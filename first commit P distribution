@@ -19,6 +19,9 @@ library(MuMIn)
 #[lambda]  sitecovss = constant or SPEC or CIRC
 #[detection] obscovs = constant or time or SPEC or CIRC
 
+##############################################################
+### List of implemented models (/ecological meaning) ######### 
+
 #fm1 = lambda(.),p(.)
 #fm2 = lambda(.),p(t)
 #fm3 = lambda(.),p(SPEC)
@@ -161,8 +164,8 @@ circ.hetsap <- matrix(as.numeric(x=scale(c(91,168,161,141,162,155,169,101,139,11
                       20,4,byrow=F)
 circ.hetsap
 
-het.sap <- read.table(file.choose(), header = TRUE)  # charger hetsap.txt
-#het.sap <- read.table(hetsap.txt, header = TRUE)  # charger hetsap.txt
+het.sap <- read.table(file.choose(), header = TRUE)  # load hetsap.txt
+#het.sap <- read.table(hetsap.txt, header = TRUE)  # load hetsap.txt
 het.sap 
 
 circ.hetsap <- read.table(file.choose(), header = TRUE)  # charger 4v_st_circ_hetsap.txt
@@ -185,7 +188,7 @@ summary(JJ)
 ####################################################################################
 ####################################################################################
 ####################################################################################
-#######################  K=300 (large convergence) with P distribution #############
+#######################  K=300 (large convergence) using P distribution #############
 ####################################################################################
 
 #fm 1= lambda(.),p(.)
@@ -440,10 +443,10 @@ cand.mod[[48]]<-fm32b
 Modnames<-paste("mod", 1:length(cand.mod), sep="")
 
 ##compute model selection table
-#aictab(cand.set=cand.mod, modnames=Modnames,second.ord = TRUE) ## donne les AICc
-#aictab(cand.set=cand.mod, modnames=Modnames, second.ord = FALSE) ## donne les AIC !
+#aictab(cand.set=cand.mod, modnames=Modnames,second.ord = TRUE) ## returns AIC !  dismiss as N/K <40
+#aictab(cand.set=cand.mod, modnames=Modnames, second.ord = FALSE) ## returns AICc !
 
-selectionTable <- aictab(cand.set=cand.mod, modnames=Modnames, second.ord = FALSE) ## donne les AIC !  NOT GOOD N/K <40
+selectionTable <- aictab(cand.set=cand.mod, modnames=Modnames, second.ord = FALSE) ## returns AIC !  dismiss as N/K <40
 
-selectionTable <- aictab(cand.set=cand.mod, modnames=Modnames, second.ord = TRUE) ## donne les AICc !
+selectionTable <- aictab(cand.set=cand.mod, modnames=Modnames, second.ord = TRUE) ## returns AICc !
 selectionTable
