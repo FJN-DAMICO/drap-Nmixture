@@ -1,0 +1,449 @@
+getwd()
+setwd("D:/Drapetisca 2014")
+
+
+library(unmarked)
+library(AICcmodavg)
+library(ubms)
+library(MuMIn)
+
+### know how  Déterminer le nombre de cours de votre processeur Windows 10
+## Appuyez sur CTRL + MAJ + Échap pour ouvrir le gestionnaire des tâches.
+## Sélectionnez l'onglet performance pour afficher le nombre de cours et de processeurs logiques dont dispose votre PC.
+## 4 coeurs & 8 processeurs logiques  sur DELL Laitutde windows 10
+
+# covars: .  : constant
+#t : time
+#CIRC : standardized circumference
+#SPEC : tree species
+#[lambda]  sitecovss = constant or SPEC or CIRC
+#[detection] obscovs = constant or time or SPEC or CIRC
+
+#fm1 = lambda(.),p(.)
+#fm2 = lambda(.),p(t)
+#fm3 = lambda(.),p(SPEC)
+#fm4 = lambda(.),p(CIRC)
+#fm5 = lambda(.),p(t,SPEC)
+#fm6 = lambda(.),p(t,CIRC)
+#fm7 = lambda(.),p(SPEC,CIRC)
+#fm8 = lambda(.),p(t,SPEC,CIRC)
+
+#fm9 = lambda(SPEC),p(.)
+#fm10 = lambda(SPEC),p(t)
+#fm11 = lambda(SPEC),p(SPEC)
+#fm12 = lambda(SPEC),p(CIRC)
+#fm13 = lambda(SPEC),p(t,SPEC)
+#fm14 = lambda(SPEC),p(t,CIRC)
+#fm15 = lambda(SPEC),p(SPEC,CIRC)
+#fm16 = lambda(SPEC),p(t,SPEC,CIRC)
+
+#fm17 = lambda(CIRC),p(.)
+#fm18 = lambda(CIRC),p(t)
+#fm19 = lambda(CIRC),p(SPEC)
+#fm20 = lambda(CIRC),p(CIRC)
+#fm21 = lambda(CIRC),p(t,SPEC)
+#fm22 = lambda(CIRC),p(t,CIRC)
+#fm23 = lambda(CIRC),p(SPEC,CIRC)
+#fm24 = lambda(CIRC),p(t,SPEC,CIRC)
+
+#fm17b = lambda(CIRC+CIRC²),p(.)
+#fm18b = lambda(CIRC+CIRC²),p(t)
+#fm19b = lambda(CIRC+CIRC²),p(SPEC)
+#fm20b = lambda(CIRC+CIRC²),p(CIRC)
+#fm21b = lambda(CIRC+CIRC²),p(t,SPEC)
+#fm22b = lambda(CIRC+CIRC²),p(t,CIRC)
+#fm23b = lambda(CIRC+CIRC²),p(SPEC,CIRC)
+#fm24b = lambda(CIRC+CIRC²),p(t,SPEC,CIRC)
+
+#fm25 = lambda(SPEC,CIRC),p(.)
+#fm26 = lambda(SPEC,CIRC),p(t)
+#fm27 = lambda(SPEC,CIRC),p(SPEC)
+#fm28 = lambda(SPEC,CIRC),p(CIRC)
+#fm29 = lambda(SPEC,CIRC),p(t,SPEC)
+#fm30 = lambda(SPEC,CIRC),p(t,CIRC)
+#fm31 = lambda(SPEC,CIRC),p(SPEC,CIRC)
+#fm32 = lambda(SPEC,CIRC),p(t,SPEC,CIRC)
+#fm32 = lambda(SPEC,CIRC),p(t,SPEC,CIRC)
+
+#fm25b = lambda(SPEC,CIRC+CIRC²),p(.)
+#fm26b = lambda(SPEC,CIRC+CIRC²),p(t)
+#fm27b = lambda(SPEC,CIRC+CIRC²),p(SPEC)
+#fm28b = lambda(SPEC,CIRC+CIRC²),p(CIRC)
+#fm29b = lambda(SPEC,CIRC+CIRC²),p(t,SPEC)
+#fm30b = lambda(SPEC,CIRC+CIRC²),p(t,CIRC)
+#fm31b = lambda(SPEC,CIRC+CIRC²),p(SPEC,CIRC)
+#fm32b = lambda(SPEC,CIRC+CIRC²),p(t,SPEC,CIRC)
+#fm32b = lambda(SPEC,CIRC+CIRC²),p(t,SPEC,CIRC)
+
+############################################# IMPORT COUNT DAT#####################"
+##### Drapetisca2000
+ds2000=matrix(c(0,1,0,0,0,1,2,1,0,0,0,1,0,1,0,0,1,2,1,0,0,2,3,2,1,0,0,1,0,0,1,1,2,3,3,0,1,3,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1,1,1,1,0,0,1,1,1,1,2,0,2,0,1,1,3,2,4), nrow=20,ncol=4,byrow=TRUE)
+ds2000
+
+###################################  import site covariates #######################
+################################ site.covs   &&&& circ.covs  #########################
+#site.covs <- data.frame(x=c(0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))
+site.covs <- data.frame(x=c("0","0","0","0","0","0","0","0","0","0",
+                            "1","1","1","1","1","1","1","1","1","1"))
+site.covs <- data.frame(x=c("A","A","A","A","A","A","A","A","A","A",
+                            "F","F","F","F","F","F","F","F","F","F"))
+site.covs
+str(site.covs)
+
+#scaled circ 
+#circ.covS <- data.frame(z=c(-0.574,1.245,1.080,0.607,1.103,0.938,1.269,-0.338,0.560,0.017,-1.448,-1.378,-1.614,-1.094,-0.929,1.151,-1.118,0.466,0.017,0.040))
+circ.covs <- data.frame(z=c(91,168,161,141,162,155,169,101,139,116,
+                            54,57,47,69,76,164,68,135,116,117))
+circ.covs <- data.frame(z=c(0.91,1.68,1.61,1.41,1.62,1.55,1.69,1.01,1.39,1.16,
+                            0.54,0.57,0.47,0.69,0.76,1.64,0.68,1.35,1.16,1.17))
+
+circ.covs
+str(circ.covs)
+
+COV <- cbind(site.covs,circ.covs)
+COV
+str(COV)
+
+###################################  import obs covariates #######################
+################################ visitMat vs JJ  &&&&&&&&&& het.sap   &&&&&     &&&& circ.covs  #########################
+## visitMat vs JJ  
+nSites <- 20
+nVisits <- 4
+visitMat <- matrix(as.character(1:nVisits), nSites, nVisits, byrow=TRUE)
+
+# alternative JJ   year 2000
+JJ <- c('07/18/2000','07/31/2000','08/13/2000','08/25/2000')
+strptime(JJ, '%m/%d/%Y')$yday+1
+# [1] 200 213 226 238
+
+visitJJ1 <- matrix(as.numeric(200), 20, 1, byrow=F)
+visitJJ2 <- matrix(as.numeric(213), 20, 1, byrow=F)
+visitJJ3 <- matrix(as.numeric(226), 20, 1, byrow=F)
+visitJJ4 <- matrix(as.numeric(238), 20, 1, byrow=F)
+visitJJ <- cbind(visitJJ1,visitJJ2,visitJJ3,visitJJ4)
+visitJJ 
+
+####  hetsap  
+#het.sap <- read.table(file.choose(), header = TRUE)  # charger hetsap.txt
+het.sap <- cbind(site.covs,site.covs,site.covs,site.covs)
+het.sap
+#alternative 
+het.sap.A <- matrix(as.factor(0), 10, 4, byrow=F)
+het.sap.A
+het.sap.F <- matrix(as.factor(1), 10, 4, byrow=F)
+het.sap.F
+het.sap <- rbind(het.sap.A,het.sap.F)
+het.sap
+# better
+het.sap <- matrix(as.factor(x=c(0,0,0,0,0,0,0,0,0,0,
+                                1,1,1,1,1,1,1,1,1,1)),
+                  20,4,byrow=F)
+het.sap
+
+#### circ.hetsap
+#circ.hetsap <- read.table(file.choose(), header = TRUE)  # charger 4v_st_circ_hetsap.txt
+circ.hetsap <- cbind(circ.covs,circ.covs,circ.covs,circ.covs)
+circ.hetsap
+# standardized   
+circ.hetsap <- matrix(as.numeric(x=c(-0.574,1.245,1.080,0.607,1.103,0.938,1.269,-0.338,0.560,0.017,
+                                     -1.448,-1.378,-1.614,-1.094,-0.929,1.151,-1.118,0.466,0.017,0.040)),
+                      20,4,byrow=F)
+circ.hetsap
+#alternative unscaled
+circ.hetsap <- matrix(as.numeric(x=c(91,168,161,141,162,155,169,101,139,116,
+                                     54,57,47,69,76,164,68,135,116,117)),
+                      20,4,byrow=F)
+circ.hetsap
+
+#using scale check it out  help(scale)
+circ.hetsap <- matrix(as.numeric(x=scale(c(91,168,161,141,162,155,169,101,139,116,
+                                           54,57,47,69,76,164,68,135,116,117), center=F,scale=TRUE)),
+                      20,4,byrow=F)
+circ.hetsap
+
+het.sap <- read.table(file.choose(), header = TRUE)  # charger hetsap.txt
+#het.sap <- read.table(hetsap.txt, header = TRUE)  # charger hetsap.txt
+het.sap 
+
+circ.hetsap <- read.table(file.choose(), header = TRUE)  # charger 4v_st_circ_hetsap.txt
+circ.hetsap
+
+
+
+
+########## unmarkedFramePCount #############
+# siteCovs : COV  <- cbind(site.covs,circ.covs)
+# obsCovs=list(visit=visitMat,hetsap=het.sap,circ=circ.hetsap))
+
+umf <- unmarkedFramePCount(y=ds2000, siteCovs=COV, obsCovs=list(visit=visitMat,hetsap=het.sap,circ=circ.hetsap))
+summary(umf)
+
+umfJJ <- unmarkedFramePCount(y=ds2000, siteCovs=COV, obsCovs=list(visit=visitJJ,hetsap=het.sap,circ=circ.hetsap))
+summary(JJ)
+
+
+####################################################################################
+####################################################################################
+####################################################################################
+#######################  K=300 (large convergence) with P distribution #############
+####################################################################################
+
+#fm 1= lambda(.),p(.)
+fm1 <- pcount(~ 1 ~ 1, umf, K=300,mixture=c("P"))
+fm1
+
+#fm2 = lambda(.),p(t)
+fm2 <- pcount(~visit-1 ~ 1, umf, K=300,mixture=c("P"))
+fm2
+
+#fm3 = lambda(.),p(SPEC)
+fm3 <- pcount(~hetsap ~ 1, umf, K=300,mixture=c("P"))
+fm3
+
+#fm4 = lambda(.),p(CIRC)
+fm4 <- pcount(~circ ~ 1, umf, K=300,mixture=c("P"))
+fm4
+
+#fm5 = lambda(.),p(t,SPEC)
+fm5 <- pcount(~visit-1  + hetsap ~ 1, umf, K=300,mixture=c("P"))
+fm5
+
+#fm6 = lambda(.),p(t,CIRC)
+fm6 <- pcount(~visit-1  + circ ~ 1, umf, K=300,mixture=c("P"))
+fm6
+
+#fm7 = lambda(.),p(SPEC,CIRC)
+fm7 <- pcount(~ hetsap  + circ ~ 1, umf, K=300,mixture=c("P"))
+fm7
+
+
+#fm8 = lambda(.),p(t,SPEC,CIRC)
+fm8 <- pcount(~ visit-1 + circ  + hetsap ~ 1, umf, K=300,mixture=c("P"))
+fm8
+
+
+#fm9 = lambda(SPEC),p(.)
+fm9 <- pcount(~ 1 ~ x, umf, K=300,mixture=c("P"))
+fm9
+
+#fm10 = lambda(SPEC),p(t)
+fm10 <- pcount(~visit-1 ~ x, umf, K=300,mixture=c("P"))
+fm10
+
+#fm11 = lambda(SPEC),p(SPEC)
+fm11 <- pcount(~hetsap ~ x, umf, K=300,mixture=c("P"))
+fm11
+
+#fm12 = lambda(SPEC),p(CIRC)
+fm12 <- pcount(~circ ~ x, umf, K=300,mixture=c("P"))
+fm12
+
+#fm13 = lambda(SPEC),p(t,SPEC)
+fm13 <- pcount(~visit-1  + hetsap ~ x, umf, K=300,mixture=c("P"))
+fm13
+
+#fm14 = lambda(SPEC),p(t,CIRC)
+fm14 <- pcount(~visit-1  + circ ~ x, umf, K=300,mixture=c("P"))
+fm14
+
+#fm15 = lambda(SPEC),p(SPEC,CIRC)
+fm15 <- pcount(~ hetsap  + circ ~ x, umf, K=300,mixture=c("P"))
+fm15
+
+#fm16 = lambda(SPEC),p(t,SPEC,CIRC)
+fm16 <- pcount(~ visit-1 + circ  + hetsap ~ x, umf, K=300,mixture=c("P"))
+fm16
+
+
+#fm17 = lambda(CIRC),p(.)
+fm17 <- pcount(~ 1 ~ z, umf, K=300,mixture=c("P"))
+fm17
+
+#fm18 = lambda(CIRC),p(t)
+fm18 <- pcount(~visit-1 ~ z, umf, K=300,mixture=c("P"))
+fm18
+
+#fm19 = lambda(CIRC),p(SPEC)
+fm19 <- pcount(~hetsap ~ z, umf, K=300,mixture=c("P"))
+fm19
+
+#fm20 = lambda(CIRC),p(CIRC)
+fm20 <- pcount(~circ ~ z, umf, K=300,mixture=c("P"))
+fm20
+
+#fm21 = lambda(CIRC),p(t,SPEC)
+fm21 <- pcount(~visit-1  + hetsap ~ z, umf, K=300,mixture=c("P"))
+fm21
+
+#fm22 = lambda(CIRC),p(t,CIRC)
+fm22 <- pcount(~visit-1  + circ ~ z, umf, K=300,mixture=c("P"))
+fm22
+
+#fm23 = lambda(CIRC),p(SPEC,CIRC)
+fm23 <- pcount(~ hetsap  + circ ~ z, umf, K=300,mixture=c("P"))
+fm23
+
+#fm24 = lambda(CIRC),p(t,SPEC,CIRC)
+fm24 <- pcount(~ visit-1 + circ  + hetsap ~ z, umf, K=300,mixture=c("P"))
+fm24
+
+#fm25 = lambda(SPEC,CIRC),p(.)
+fm25 <- pcount(~ 1 ~ x + z, umf, K=300,mixture=c("P"))
+fm25
+
+#fm26 = lambda(SPEC,CIRC),p(t)
+fm26 <- pcount(~visit-1 ~ x + z, umf, K=300,mixture=c("P"))
+fm26
+
+#fm27 = lambda(SPEC,CIRC),p(SPEC)
+fm27 <- pcount(~hetsap ~ x + z, umf, K=300,mixture=c("P"))
+fm27
+
+#fm28 = lambda(SPEC,CIRC),p(CIRC)  ##### deleted id fm20
+fm28 <- pcount(~circ ~ x + z, umf, K=300,mixture=c("P"))
+fm28
+
+#fm29 = lambda(SPEC,CIRC),p(t,SPEC)
+fm29 <- pcount(~visit-1  + hetsap ~ x + z, umf, K=300,mixture=c("P"))
+fm29
+
+#fm30 = lambda(SPEC,CIRC),p(t,CIRC)
+fm30 <- pcount(~visit-1  + circ ~ x + z, umf, K=300,mixture=c("P"))
+fm30
+
+#fm31 = lambda(SPEC,CIRC),p(SPEC,CIRC)
+fm31 <- pcount(~ hetsap  + circ ~ x + z, umf, K=300,mixture=c("P"))
+fm31
+
+#fm32 = lambda(SPEC,CIRC),p(t,SPEC,CIRC)
+fm32 <- pcount(~ visit-1 + circ  + hetsap ~ x + z, umf, K=300,mixture=c("P"))
+fm32
+
+#fm17b = lambda(CIRC+CIRC²),p(.)
+fm17b <- pcount(~ 1 ~ z+I(z^2), umf, K=300,mixture=c("P"))
+fm17b
+
+#fm18b = lambda(CIRC+CIRC²),p(t)
+fm18b <- pcount(~ visit-1 ~ z+I(z^2), umf, K=300,mixture=c("P"))
+fm18b
+
+#fm19b = lambda(CIRC+CIRC²),p(SPEC)
+fm19b <- pcount(~ hetsap ~ z+I(z^2), umf, K=300,mixture=c("P"))
+fm19b
+
+### best ranking dredge fm20c <- pcount(~ circ-1 ~ z+I(z^2), umf, K=300,mixture=c("P"))
+#fm20b = lambda(CIRC+CIRC²),p(CIRC)
+fm20b <- pcount(~ circ ~ z+I(z^2), umf, K=300,mixture=c("P"))
+fm20b
+
+#fm21b = lambda(CIRC+CIRC²),p(t,SPEC)
+fm21b <- pcount(~ visit-1 + hetsap ~ z+I(z^2), umf, K=300,mixture=c("P"))
+fm21b
+
+#fm22b = lambda(CIRC+CIRC²),p(t,CIRC)
+fm22b <- pcount(~ visit-1 + circ ~ z+I(z^2), umf, K=300,mixture=c("P"))
+fm22b
+
+#fm23b = lambda(CIRC+CIRC²),p(SPEC,CIRC)
+fm23b <- pcount(~ hetsap + circ ~ z+I(z^2), umf, K=300,mixture=c("P"))
+fm23b
+
+#fm24b = lambda(CIRC+CIRC²),p(t,SPEC,CIRC)
+fm24b <- pcount(~ visit-1 + hetsap + circ ~ z+I(z^2), umf, K=300,mixture=c("P"))
+fm24b
+
+#fm25b = lambda(SPEC,CIRC+CIRC²),p(.)
+fm25b <- pcount(~ 1 ~ x + z+I(z^2), umf, K=300,mixture=c("P"))
+fm25b
+
+#fm26b = lambda(SPEC,CIRC+CIRC²),p(t)
+fm26b <- pcount(~visit-1 ~ x + z+I(z^2), umf, K=300,mixture=c("P"))
+fm26b
+
+#fm27b = lambda(SPEC,CIRC+CIRC²),p(SPEC)
+fm27b <- pcount(~hetsap ~ x + z+I(z^2), umf, K=300,mixture=c("P"))
+fm27b
+
+#fm28b = lambda(SPEC,CIRC+CIRC²),p(CIRC)   ### deleted id fm20b
+fm28b <- pcount(~circ ~ x+z+I(z^2), umf, K=300,mixture=c("P"))
+fm28b
+
+#fm29b = lambda(SPEC,CIRC+CIRC²),p(t,SPEC)
+fm29b <- pcount(~visit-1  + hetsap ~ x + z+I(z^2), umf, K=300,mixture=c("P"))
+fm29b
+
+#fm30b = lambda(SPEC,CIRC+CIRC²),p(t,CIRC)
+fm30b <- pcount(~visit-1  + circ ~ x + z+I(z^2), umf, K=300,mixture=c("P"))
+fm30b
+
+#fm31b = lambda(SPEC,CIRC+CIRC²),p(SPEC,CIRC)
+fm31b <- pcount(~ hetsap  + circ ~ x + z+I(z^2), umf, K=300,mixture=c("P"))
+fm31b
+
+#fm32b = lambda(SPEC,CIRC+CIRC²),p(t,SPEC,CIRC)
+fm32b <- pcount(~ visit-1 + circ  + hetsap ~ x + z+I(z^2), umf, K=300,mixture=c("P"))
+fm32b
+
+##set up candidate models in list
+cand.mod <-list()
+cand.mod[[1]]<-fm1
+cand.mod[[2]]<-fm2
+cand.mod[[3]]<-fm3
+cand.mod[[4]]<-fm4
+cand.mod[[5]]<-fm5
+cand.mod[[6]]<-fm6
+cand.mod[[7]]<-fm7
+cand.mod[[8]]<-fm8
+cand.mod[[9]]<-fm9
+cand.mod[[10]]<-fm10
+cand.mod[[11]]<-fm11
+cand.mod[[12]]<-fm12
+cand.mod[[13]]<-fm13
+cand.mod[[14]]<-fm14
+cand.mod[[15]]<-fm15
+cand.mod[[16]]<-fm16
+cand.mod[[17]]<-fm17
+cand.mod[[18]]<-fm18
+cand.mod[[19]]<-fm19
+cand.mod[[20]]<-fm20
+cand.mod[[21]]<-fm21
+cand.mod[[22]]<-fm22
+cand.mod[[23]]<-fm23
+cand.mod[[24]]<-fm24
+cand.mod[[25]]<-fm25
+cand.mod[[26]]<-fm26
+cand.mod[[27]]<-fm27
+cand.mod[[28]]<-fm28
+cand.mod[[29]]<-fm29
+cand.mod[[30]]<-fm30
+cand.mod[[31]]<-fm31
+cand.mod[[32]]<-fm32
+cand.mod[[33]]<-fm17b
+cand.mod[[34]]<-fm18b
+cand.mod[[35]]<-fm19b
+cand.mod[[36]]<-fm20b
+cand.mod[[37]]<-fm21b
+cand.mod[[38]]<-fm22b
+cand.mod[[39]]<-fm23b
+cand.mod[[40]]<-fm24b
+cand.mod[[41]]<-fm25b
+cand.mod[[42]]<-fm26b
+cand.mod[[43]]<-fm27b
+cand.mod[[44]]<-fm28b
+cand.mod[[45]]<-fm29b
+cand.mod[[46]]<-fm30b
+cand.mod[[47]]<-fm31b
+cand.mod[[48]]<-fm32b
+
+
+##create a vector of model names
+Modnames<-paste("mod", 1:length(cand.mod), sep="")
+
+##compute model selection table
+#aictab(cand.set=cand.mod, modnames=Modnames,second.ord = TRUE) ## donne les AICc
+#aictab(cand.set=cand.mod, modnames=Modnames, second.ord = FALSE) ## donne les AIC !
+
+selectionTable <- aictab(cand.set=cand.mod, modnames=Modnames, second.ord = FALSE) ## donne les AIC !  NOT GOOD N/K <40
+
+selectionTable <- aictab(cand.set=cand.mod, modnames=Modnames, second.ord = TRUE) ## donne les AICc !
+selectionTable
