@@ -13,8 +13,9 @@ library(MuMIn)
 ## 4 coeurs & 8 processeurs logiques  sur DELL Laitutde windows 10
 
 # covars: .  : constant
-#t : time
-#CIRC : standardized circumference
+#date : date
+# site <- factor(c(1:20))
+#CIRC : circumference
 #SPEC : tree species
 #[lambda]  sitecovss = constant or SPEC or CIRC
 #[detection] obscovs = constant or time or SPEC or CIRC
@@ -83,22 +84,20 @@ library(MuMIn)
 ds2000=matrix(c(0,1,0,0,0,1,2,1,0,0,0,1,0,1,0,0,1,2,1,0,0,2,3,2,1,0,0,1,0,0,1,1,2,3,3,0,1,3,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1,1,1,1,0,0,1,1,1,1,2,0,2,0,1,1,3,2,4), nrow=20,ncol=4,byrow=TRUE)
 ds2000
 
+############################################### SITE ID ################################
+site <- factor(c(1:20))
+
 ###################################  import site covariates #######################
 ################################ site.covs   &&&& circ.covs  #########################
-#site.covs <- data.frame(x=c(0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))
-site.covs <- data.frame(x=c("0","0","0","0","0","0","0","0","0","0",
-                            "1","1","1","1","1","1","1","1","1","1"))
-site.covs <- data.frame(x=c("A","A","A","A","A","A","A","A","A","A",
-                            "F","F","F","F","F","F","F","F","F","F"))
-site.covs
-str(site.covs)
+# tree species 
+#tree <- factor(c(1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2))
+#alternative
+# site.covs <- data.frame(x=c("0","0","0","0","0","0","0","0","0","0","1","1","1","1","1","1","1","1","1","1"))
+# site.covs <- data.frame(x=c("A","A","A","A","A","A","A","A","A","A", "F","F","F","F","F","F","F","F","F","F"))
 
-#scaled circ 
-#circ.covS <- data.frame(z=c(-0.574,1.245,1.080,0.607,1.103,0.938,1.269,-0.338,0.560,0.017,-1.448,-1.378,-1.614,-1.094,-0.929,1.151,-1.118,0.466,0.017,0.040))
-circ.covs <- data.frame(z=c(91,168,161,141,162,155,169,101,139,116,
-                            54,57,47,69,76,164,68,135,116,117))
-circ.covs <- data.frame(z=c(0.91,1.68,1.61,1.41,1.62,1.55,1.69,1.01,1.39,1.16,
-                            0.54,0.57,0.47,0.69,0.76,1.64,0.68,1.35,1.16,1.17))
+# circumnference 
+#girth <- data.frame(girth=c(54, 57, 47, 69, 76, 164, 68, 135, 116, 117, 91, 168, 161, 141, 162, 155, 169, 101, 139, 116))
+#circ.covs <- data.frame(z=c(54, 57, 47, 69, 76, 164, 68, 135, 116, 117, 91, 168, 161, 141, 162, 155, 169, 101, 139, 116))
 
 circ.covs
 str(circ.covs)
@@ -147,20 +146,15 @@ het.sap
 #circ.hetsap <- read.table(file.choose(), header = TRUE)  # charger 4v_st_circ_hetsap.txt
 circ.hetsap <- cbind(circ.covs,circ.covs,circ.covs,circ.covs)
 circ.hetsap
-# standardized   
-circ.hetsap <- matrix(as.numeric(x=c(-0.574,1.245,1.080,0.607,1.103,0.938,1.269,-0.338,0.560,0.017,
-                                     -1.448,-1.378,-1.614,-1.094,-0.929,1.151,-1.118,0.466,0.017,0.040)),
-                      20,4,byrow=F)
-circ.hetsap
-#alternative unscaled
-circ.hetsap <- matrix(as.numeric(x=c(91,168,161,141,162,155,169,101,139,116,
-                                     54,57,47,69,76,164,68,135,116,117)),
-                      20,4,byrow=F)
-circ.hetsap
 
-#using scale check it out  help(scale)
-circ.hetsap <- matrix(as.numeric(x=scale(c(91,168,161,141,162,155,169,101,139,116,
-                                           54,57,47,69,76,164,68,135,116,117), center=F,scale=TRUE)),
+#alternative unscaled
+#circ.hetsap <- matrix(as.numeric(x=c(54, 57, 47, 69, 76, 164, 68, 135, 116, 117,
+#                                91, 168, 161, 141, 162, 155, 169, 101, 139, 116))),
+#                      20,4,byrow=F)
+
+USE standardized data [scale check it out  help(scale)]
+circ.hetsap <- matrix(as.numeric(x=scale(c(54, 57, 47, 69, 76, 164, 68, 135, 116, 117,
+                                91, 168, 161, 141, 162, 155, 169, 101, 139, 116), center=F,scale=TRUE)),
                       20,4,byrow=F)
 circ.hetsap
 
@@ -178,10 +172,9 @@ circ.hetsap
 # siteCovs : COV  <- cbind(site.covs,circ.covs)
 # obsCovs=list(visit=visitMat,hetsap=het.sap,circ=circ.hetsap))
 
-umf <- unmarkedFramePCount(y=ds2000, siteCovs=COV, obsCovs=list(visit=visitMat,hetsap=het.sap,circ=circ.hetsap))
-summary(umf)
+#umf <- unmarkedFramePCount(y=ds2000, siteCovs=COV, obsCovs=list(visit=visitMat,hetsap=het.sap,circ=circ.hetsap))
 
-umfJJ <- unmarkedFramePCount(y=ds2000, siteCovs=COV, obsCovs=list(visit=visitJJ,hetsap=het.sap,circ=circ.hetsap))
+umf <- unmarkedFramePCount(y=ds2000, siteCovs=COV, obsCovs=list(visit=visitJJ,hetsap=het.sap,circ=circ.hetsap))
 summary(JJ)
 
 
